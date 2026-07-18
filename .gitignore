@@ -1,5 +1,6 @@
-environments/global.env
-environments/secrets.env
-
 data/
 storage/minio/minio-data
+
+playground.log
+
+/**/*.env

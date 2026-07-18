@@ -4,14 +4,35 @@ This repo contains the various docker compose files for the apps I have built fo
 
 ## Contents
 
+### Scripts
+
+Scripts included in this directory have been written to facilitate recovery routines for either the entire suite of services or a given service. Interaction with these scripts is done via the CLI that is included in this directory and it is advised to add the below function to your .bashrc/.zshrc file.
+
+```
+playground() {
+    local REPO_DIR="/path/to/repo"
+
+    "$REPO_DIR/.venv/bin/python" "$REPO_DIR/scripts/cli.py" "$@"
+}
+```
+
+Using this function means interactions with the automation scripts is as below.
+
+`playground restart pypi`
+`playground restore`
+
 ### Core
 
 #### Postgres
+
 Version: 16
 Volume: `/media/ianderijk/Backup/postgres-data`
 Ports: 6543
 
+#### PyPi
+
+
+
 ### Apps
 
 #### Chapflix
-
