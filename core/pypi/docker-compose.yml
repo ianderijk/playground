@@ -1,0 +1,10 @@
+services:
+  pypiserver:
+    image: docker.io/pypiserver/pypiserver:latest
+    container_name: pypiserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/idr/packages:/data/packages
+    command: run --port "8080" -P . -a . /data/packages
+    restart: always
