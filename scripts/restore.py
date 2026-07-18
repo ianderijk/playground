@@ -1,34 +1,15 @@
 import os
-import subprocess
 import time
-import logging
 from pathlib import Path
-from typing import Any
-
-logger = logging.Logger("playground-restore", level="DEBUG")
-file_handler = logging.FileHandler(Path(__file__).parent / "playground.log")
-file_handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-file_handler.setFormatter(formatter)
-
-logger.addHandler(file_handler)
+from utils import logger, run_command, ROOT
+from typing import NamedTuple
 
 logger.debug("Starting playground restoration")
 
 NETWORK_NAME = "playground-routing"
 SERVICE_GROUPS = ("core", "storage", "apis", "apps")
-ROOT = Path(__file__).parent.absolute()
 
-
-def run_command(command: str, check: bool = True) -> Any:
-    logger.debug(f"Running command '{command}'...")
-    try:
-        result = subprocess.run(command, shell=True, check=check, text=True, capture_output=True)
-        logger.info("Command run successfully")
-        return result
-    except subprocess.CalledProcessError as e:
-        logger.critical(f"Failed to run command, exception: {e}")
-        os._exit(1)
+Service = NamedTuple("Service", [("compose", Path), ("env", Path)])
 
 
 def check_env_files() -> None:
@@ -42,18 +23,18 @@ def check_env_files() -> None:
 
 
 def create_docker_network() -> None:
-    logger.debug("Checking for docker network...")
+    logger.debug("Checking for docker network")
     network_check = run_command(f"docker network inspect {NETWORK_NAME}", check=False)
     if network_check.returncode == 1:
-        logger.debug(f"No network found, creating {NETWORK_NAME}...")
+        logger.debug(f"No network found, creating {NETWORK_NAME}")
         run_command(f"docker network create {NETWORK_NAME}")
         logger.info("Network created")
         return
     logger.info("Network found")
 
 
-def _find_compose_files() -> dict[str, list]:
-    logger.info("Finding compose files...")
+def create_services() -> dict[str, list]:
+    logger.info("Finding compose files")
     compose_files = {k: [] for k in SERVICE_GROUPS}
     for service in SERVICE_GROUPS:
         service_path = ROOT / service
@@ -61,35 +42,50 @@ def _find_compose_files() -> dict[str, list]:
             if any("docker-compose" in x for x in files):
                 service_group = Path(root).parent.stem
                 compose_path = Path(root) / "docker-compose.yml"
-                compose_files[service_group].append(compose_path)
+                env_path = Path(root) / ".env"
+                env_file = env_path if env_path.exists() else None
+                service_obj = Service(compose_path, env_file)
+                compose_files[service_group].append(service_obj)
                 logger.debug(f"Found {compose_path}")
     return compose_files
 
 
-COMPOSE_FILES = _find_compose_files()
+SERVICES = create_services()
 
 
 def remove_partial_containers() -> None:
-    logger.debug("Removing any partially running containers...")
+    logger.debug("Removing any partially running containers")
     # reverse ordering here to remove core services last
     for group in reversed(SERVICE_GROUPS):
-        compose_files = COMPOSE_FILES.get(group, [])
-        for file in compose_files:
-            run_command(f"docker compose -f {file} down --remove-orphans", check=False)
+        services = SERVICES.get(group, [])
+        for service in services:
+            run_command(
+                f"docker compose -f {service.compose} down --remove-orphans",
+                check=False,
+            )
 
 
 def launch_containers() -> None:
-    logger.debug("Launching containers...")
+    logger.debug("Launching containers")
     for group in SERVICE_GROUPS:
-        compose_files = COMPOSE_FILES.get(group, [])
-        for file in compose_files:
-            service = file.parent.stem
-            logger.debug(f"Launching {service}...")
-            run_command(f"docker compose -f {file} up -d", check=False)
+        compose_files = SERVICES.get(group, [])
+        for service in compose_files:
+            service_name = service.compose.parent.stem
+            logger.debug(f"Launching {service_name}")
+            if service.env is not None:
+                run_command(
+                    f"docker compose --env-file {service.env} -f {service.compose} up -d",
+                    check=False,
+                )
+            else:
+                run_command(f"docker compose -f {service.compose} up -d", check=False)
             if service == "postgres":
-                logger.debug("Performing health check on database...")
+                logger.debug("Performing health check on database")
                 while True:
-                    pg_check = run_command("docker exec playground-postgres pg_isready -U chap_admin", check=False)
+                    pg_check = run_command(
+                        "docker exec playground-postgres pg_isready -U chap_admin",
+                        check=False,
+                    )
                     if pg_check.returncode == 0:
                         logger.info("Postgres healthy")
                         break
@@ -98,19 +94,20 @@ def launch_containers() -> None:
     logger.info("Containers launched successfully")
 
 
-def main() -> None:
-    logger.debug("Starting playground restoration script...")
+def restore_services() -> None:
+    logger.debug("Starting playground restoration script")
     print("==========================================================")
     print("           PLAYGROUND MONOREPO RESTORATION START          ")
     print("==========================================================")
+    print("Checking for env files...")
     check_env_files()
+    print("Creating docker network...")
     create_docker_network()
+    print("Purging partial containers...")
     remove_partial_containers()
+    print("Launching containers...")
     launch_containers()
     print("==========================================================")
     print("         PLAYGROUND MONOREPO RESTORATION COMPLETE         ")
     print("==========================================================")
-
-
-if __name__ == "__main__":
-    main()
+    logger.info("Playground restored")

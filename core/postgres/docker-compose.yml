@@ -4,9 +4,9 @@ services:
     container_name: playground-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${PASSWORD}
       POSTGRES_DB: chapflix
     volumes:
-      - /media/idr/ExtDrive/postgres-data:/var/lib/postgresql/data
+      - ${POSTGRES_VOLUME}:/var/lib/postgresql/data
     ports:
       - "6543:6543"
