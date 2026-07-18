@@ -42,7 +42,8 @@ def create_services() -> dict[str, list]:
                 service_group = Path(root).parent.stem
                 compose_path = Path(root) / "docker-compose.yml"
                 env_path = Path(root) / ".env"
-                service_obj = Service(compose_path, env_path)
+                env_file = env_path if env_path.exists() else None
+                service_obj = Service(compose_path, env_file)
                 compose_files[service_group].append(service_obj)
                 logger.debug(f"Found {compose_path}")
     return compose_files
@@ -67,7 +68,10 @@ def launch_containers() -> None:
         for service in compose_files:
             service_name = service.compose.parent.stem
             logger.debug(f"Launching {service_name}")
-            run_command(f"docker compose --env-file {service.env} -f {service.compose} up -d", check=False)
+            if service.env is not None:
+                run_command(f"docker compose --env-file {service.env} -f {service.compose} up -d", check=False)
+            else:
+                run_command(f"docker compose -f {service.compose} up -d", check=False)
             if service == "postgres":
                 logger.debug("Performing health check on database")
                 while True:
