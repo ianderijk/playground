@@ -11,6 +11,7 @@ SERVICE_GROUPS = ("core", "storage", "apis", "apps")
 
 Service = NamedTuple("Service", [("compose", Path), ("env", Path)])
 
+
 def check_env_files() -> None:
     logger.debug("Checking for env files...")
     envs_dir = ROOT / "environments"
@@ -58,7 +59,10 @@ def remove_partial_containers() -> None:
     for group in reversed(SERVICE_GROUPS):
         services = SERVICES.get(group, [])
         for service in services:
-            run_command(f"docker compose -f {service.compose} down --remove-orphans", check=False)
+            run_command(
+                f"docker compose -f {service.compose} down --remove-orphans",
+                check=False,
+            )
 
 
 def launch_containers() -> None:
@@ -69,13 +73,19 @@ def launch_containers() -> None:
             service_name = service.compose.parent.stem
             logger.debug(f"Launching {service_name}")
             if service.env is not None:
-                run_command(f"docker compose --env-file {service.env} -f {service.compose} up -d", check=False)
+                run_command(
+                    f"docker compose --env-file {service.env} -f {service.compose} up -d",
+                    check=False,
+                )
             else:
                 run_command(f"docker compose -f {service.compose} up -d", check=False)
             if service == "postgres":
                 logger.debug("Performing health check on database")
                 while True:
-                    pg_check = run_command("docker exec playground-postgres pg_isready -U chap_admin", check=False)
+                    pg_check = run_command(
+                        "docker exec playground-postgres pg_isready -U chap_admin",
+                        check=False,
+                    )
                     if pg_check.returncode == 0:
                         logger.info("Postgres healthy")
                         break

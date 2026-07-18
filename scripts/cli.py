@@ -13,10 +13,11 @@ SERVICES = [
     "postgres",
     "pypi",
     "vault",
-    "minio"
+    "minio",
 ]
 
 app = typer.Typer(help="Playground management CLI")
+
 
 def get_env_file() -> Path:
     env_path = ROOT / ".env"

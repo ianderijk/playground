@@ -15,10 +15,12 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
-def run_command(command: str, check: bool = True, logger = logger) -> Any:
+def run_command(command: str, check: bool = True, logger=logger) -> Any:
     logger.debug(f"Running command '{command}'...")
     try:
-        result = subprocess.run(command, shell=True, check=check, text=True, capture_output=True)
+        result = subprocess.run(
+            command, shell=True, check=check, text=True, capture_output=True
+        )
         logger.info("Command run successfully")
         return result
     except subprocess.CalledProcessError as e:
