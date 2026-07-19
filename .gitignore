@@ -4,3 +4,5 @@ storage/minio/minio-data
 playground.log
 
 /**/*.env
+
+/**/*__pycache__
