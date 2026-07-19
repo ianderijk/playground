@@ -1,9 +1,8 @@
 import typer
 import os
-from pathlib import Path
 from restore import restore_services
 from restart_service import restart_service
-from utils import ROOT
+from stop_service import stop_single_service, stop_all_services
 
 SERVICES = [
     "chapflix_api",
@@ -19,25 +18,36 @@ SERVICES = [
 app = typer.Typer(help="Playground management CLI")
 
 
-def get_env_file() -> Path:
-    env_path = ROOT / ".env"
-    if not env_path.exists():
-        typer.echo("Root .env file not found")
-        os._exit(1)
-    return env_path
-
-
 @app.command()
 def restore():
-    typer.echo("Starting playground restoration...")
     restore_services()
 
 
 @app.command()
 def restart(service: str):
+    if service not in SERVICES:
+        typer.echo(f"{service} not found")
+        os._exit(1)
     typer.echo(f"Restarting {service}...")
     restart_service(service)
     typer.echo(f"{service} restarted")
+
+
+@app.command()
+def stop(service: str):
+    if service not in SERVICES:
+        typer.echo(f"{service} not found.")
+        os._exit(1)
+    typer.echo(f"Stopping {service}...")
+    stop_single_service(service)
+    typer.echo(f"{service} stopped")
+
+
+@app.command()
+def stop_all():
+    typer.echo("Stopping all services...")
+    stop_all_services()
+    typer.echo("All services stopped")
 
 
 if __name__ == "__main__":

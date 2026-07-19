@@ -1,0 +1,10 @@
+services:
+   chaps-chores:
+     build: .
+     container_name: chaps-chores
+     environment:
+       - DATABASE_URL=${DATABASE_URL}
+       - PYTHONPATH=/app/src
+     ports:
+        - "8052:8052"
+     restart: unless-stopped

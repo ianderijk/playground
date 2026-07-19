@@ -1,0 +1,12 @@
+services:
+  chapflix:
+    container_name: chapflix2_container
+    build:
+      context: .
+      dockerfile: /media/idr/ExtDrive/Chapflix2/infra/docker/Dockerfile
+      network: host
+    ports:
+      - "8042:8042"
+    volumes:
+      - /media/idr/ExtDrive/Chapflix2/content:/app/content
+    restart: unless-stopped

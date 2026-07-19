@@ -1,15 +1,10 @@
 import os
 import time
-from pathlib import Path
-from utils import logger, run_command, ROOT
-from typing import NamedTuple
+from utils import ROOT, SERVICE_GROUPS, logger, run_command, create_services
 
 logger.debug("Starting playground restoration")
 
 NETWORK_NAME = "playground-routing"
-SERVICE_GROUPS = ("core", "storage", "apis", "apps")
-
-Service = NamedTuple("Service", [("compose", Path), ("env", Path)])
 
 
 def check_env_files() -> None:
@@ -31,23 +26,6 @@ def create_docker_network() -> None:
         logger.info("Network created")
         return
     logger.info("Network found")
-
-
-def create_services() -> dict[str, list]:
-    logger.info("Finding compose files")
-    compose_files = {k: [] for k in SERVICE_GROUPS}
-    for service in SERVICE_GROUPS:
-        service_path = ROOT / service
-        for root, _, files in os.walk(service_path):
-            if any("docker-compose" in x for x in files):
-                service_group = Path(root).parent.stem
-                compose_path = Path(root) / "docker-compose.yml"
-                env_path = Path(root) / ".env"
-                env_file = env_path if env_path.exists() else None
-                service_obj = Service(compose_path, env_file)
-                compose_files[service_group].append(service_obj)
-                logger.debug(f"Found {compose_path}")
-    return compose_files
 
 
 SERVICES = create_services()

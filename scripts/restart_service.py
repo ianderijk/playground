@@ -1,14 +1,8 @@
-from utils import ROOT, run_command, logger
+from utils import ROOT, SERVICE_MAPPING, run_command, logger
 
 
 def restart_service(service: str) -> None:
-    service_mapping = {
-        "core": ("postgres", "pypi", "vault"),
-        "storage": ("minio"),
-        "apps": ("chapflix", "chaps_chores"),
-        "apis": ("chapflix_api", "chaps_chores_api"),
-    }
-    parent_dir = next(x for x, y in service_mapping.items() if service in y)
+    parent_dir = next(x for x, y in SERVICE_MAPPING.items() if service in y)
     compose_path = ROOT / parent_dir / service / "docker-compose.yml"
     env_file = ROOT / parent_dir / service / ".env"
     logger.debug(f"Removing container: {service}")
