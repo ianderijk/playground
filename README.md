@@ -1,26 +1,26 @@
 # Playground
 
-This repo contains the various docker compose files for the apps I have built for my own use as well as the services they depend on. Everything in this repo is purely for personal pleasure and development.
+This mono-repo houses infrastructure, deployment configs and data persitence for various self-hosted personal apps and their dependencies. Everything is managed using Docker Compose and orchestrated with a python CLI automating setup, teardown and disaster recovery.
 
 ## Contents
 
-### Scripts
+### Orchestration & CLI
 
-Scripts included in this directory have been written to facilitate recovery routines for either the entire suite of services or a given service. Interaction with these scripts is done via the CLI that is included in this directory and it is advised to add the below function to your .bashrc/.zshrc file.
+Interactions with the orchestration automation are handled via the CLI. The intended entry point for accessing the CLI by adding a wrapper function to either `~/.bashrc` or `~/.zshrc`.
 
 ```
 playground() {
     local REPO_DIR="/path/to/repo"
-
     "$REPO_DIR/.venv/bin/python" "$REPO_DIR/scripts/cli.py" "$@"
 }
 ```
 
 Using this function means interactions with the automation scripts is as below.
 
-`playground restart pypi`
-`playground restore`
-`playground stop chapflix`
+Start/restart a service: `playground restart pypi`
+Stop a service: `playground stop chapflix`
+Stop all services: `playground stop-all`
+Full recovery: `playground restore`
 
 ### Core
 
@@ -44,8 +44,11 @@ Ports: 8080
 
 #### Minio
 
-Object store 
+s3 compatible object store
 
+Version: latest
+Volume: internal
+Ports: 9000:9001
 
 ### Apps
 
