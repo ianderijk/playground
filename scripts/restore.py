@@ -7,16 +7,6 @@ logger.debug("Starting playground restoration")
 NETWORK_NAME = "playground-routing"
 
 
-def check_env_files() -> None:
-    logger.debug("Checking for env files...")
-    envs_dir = ROOT / "environments"
-    env_files = os.listdir(envs_dir)
-    if sorted(env_files) != ["global.env", "secrets.env"]:
-        logger.critical("Failed to find env files")
-        os._exit(1)
-    logger.info("Found env files")
-
-
 def create_docker_network() -> None:
     logger.debug("Checking for docker network")
     network_check = run_command(f"docker network inspect {NETWORK_NAME}", check=False)
@@ -77,8 +67,6 @@ def restore_services() -> None:
     print("==========================================================")
     print("           PLAYGROUND MONOREPO RESTORATION START          ")
     print("==========================================================")
-    print("Checking for env files...")
-    check_env_files()
     print("Creating docker network...")
     create_docker_network()
     print("Purging partial containers...")

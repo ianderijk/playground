@@ -20,10 +20,13 @@ Using this function means interactions with the automation scripts is as below.
 
 `playground restart pypi`
 `playground restore`
+`playground stop chapflix`
 
 ### Core
 
 #### Postgres
+
+Backend database for various apps
 
 Version: 16
 Volume: `/media/ianderijk/Backup/postgres-data`
@@ -31,8 +34,32 @@ Ports: 6543
 
 #### PyPi
 
+Local pypi index for hosting personal tooling
+
+Version: latest
+Volume: `/home/idr/packages:/data/packages`
+Ports: 8080
+
+### Storage
+
+#### Minio
+
+Object store 
 
 
 ### Apps
 
 #### Chapflix
+
+Local media streaming app for watching cartoons on weekends
+
+Version: 1.0.2
+Volume: `home/ianderijk/Backup/Chapflix2/content`
+Ports: 8042
+
+#### Chaps Chores
+
+Web app for tracking chores around the house
+Version: 0.9.0
+Volume: N/A
+Ports: 8052
