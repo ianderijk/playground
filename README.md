@@ -17,10 +17,10 @@ playground() {
 
 Using this function means interactions with the automation scripts is as below.
 
-Start/restart a service: `playground restart pypi`
-Stop a service: `playground stop chapflix`
-Stop all services: `playground stop-all`
-Full recovery: `playground restore`
+- Start/restart a service: `playground restart pypi`
+- Stop a service: `playground stop chapflix`
+- Stop all services: `playground stop-all`
+- Full recovery: `playground restore`
 
 ### Core
 
@@ -28,17 +28,17 @@ Full recovery: `playground restore`
 
 Backend database for various apps
 
-Version: 16
-Volume: `/media/ianderijk/Backup/postgres-data`
-Ports: 6543
+- Version: 16
+- Volume: `/media/ianderijk/Backup/postgres-data`
+- Ports: 6543
 
 #### PyPi
 
 Local pypi index for hosting personal tooling
 
-Version: latest
-Volume: `/home/idr/packages:/data/packages`
-Ports: 8080
+- Version: latest
+- Volume: `/home/idr/packages:/data/packages`
+- Ports: 8080
 
 ### Storage
 
@@ -46,9 +46,9 @@ Ports: 8080
 
 s3 compatible object store
 
-Version: latest
-Volume: internal
-Ports: 9000:9001
+- Version: latest
+- Volume: internal
+- Ports: 9000:9001
 
 ### Apps
 
@@ -56,13 +56,14 @@ Ports: 9000:9001
 
 Local media streaming app for watching cartoons on weekends
 
-Version: 1.0.2
-Volume: `home/ianderijk/Backup/Chapflix2/content`
-Ports: 8042
+- Version: 1.0.2
+- Volume: `home/ianderijk/Backup/Chapflix2/content`
+- Ports: 8042
 
 #### Chaps Chores
 
 Web app for tracking chores around the house
-Version: 0.9.0
-Volume: N/A
-Ports: 8052
+
+- Version: 0.9.0
+- Volume: N/A
+- Ports: 8052
