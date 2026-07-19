@@ -1,0 +1,22 @@
+services:
+  chapflix:
+    container_name: chapflix2_container
+    build:
+      context: /media/idr/ExtDrive/Chapflix2
+      dockerfile: /media/idr/ExtDrive/Chapflix2/infra/docker/Dockerfile
+      network: host
+    ports:
+      - "8042:8042"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      - /media/idr/ExtDrive/Chapflix2/content:/app/content
+    network_mode: "host"
+    restart: unless-stopped
+
+networks:
+  chapflix_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.50.0.0/24
