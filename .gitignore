@@ -6,3 +6,7 @@ playground.log
 /**/*.env
 
 /**/*__pycache__
+
+.venv
+.ruff_cache
+TODO.md
