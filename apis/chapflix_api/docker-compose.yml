@@ -1,19 +1,17 @@
 name: playground
 
 services:
-  chapflix:
-    container_name: chapflix2-container
+  chapflix-api:
+    container_name: chapflix2-api-container
     build:
       context: /media/idr/ExtDrive/Chapflix2
-      dockerfile: /media/idr/ExtDrive/Chapflix2/infra/docker/Dockerfile.app
+      dockerfile: /media/idr/ExtDrive/Chapflix2/infra/docker/Dockerfile.api
+      network: host
     ports:
-      - "8042:8042"
+      - "8043:8043"
     environment:
       DATABASE_URL: ${DATABASE_URL}
-      PYTHONUNBUFFERED: 1
       HOST: 0.0.0.0
-    volumes:
-      - /media/idr/ExtDrive/Chapflix2/content:/app/content
     networks:
       - playground-net
     restart: unless-stopped
