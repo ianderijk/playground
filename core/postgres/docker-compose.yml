@@ -1,3 +1,5 @@
+name: playground
+
 services:
   postgres:
     image: postgres:16
@@ -6,7 +8,26 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${PASSWORD}
       POSTGRES_DB: chapflix
+    command: ["postgres", "-c", "listen_addresses=*"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d chapflix"]
+      interval: 5s
+      timeout: 15s
+      retries: 2
     volumes:
       - ${POSTGRES_VOLUME}:/var/lib/postgresql/data
     ports:
-      - "6543:6543"
+      - "6543:5432"
+    networks:
+      - playground-net
+    restart: always
+
+networks:
+  playground-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  postgres_data:

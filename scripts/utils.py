@@ -22,7 +22,9 @@ SERVICE_MAPPING = {
     "apis": ("chapflix_api", "chaps_chores_api"),
 }
 
-Service = NamedTuple("Service", [("compose", Path), ("env", Path | None)])
+class Service(NamedTuple):
+    compose: Path
+    env: Path | None
 
 
 def run_command(command: str, check: bool = True, logger=logger) -> Any:
