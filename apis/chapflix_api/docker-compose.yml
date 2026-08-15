@@ -6,7 +6,6 @@ services:
     build:
       context: /media/idr/ExtDrive/Chapflix2
       dockerfile: /media/idr/ExtDrive/Chapflix2/infra/docker/Dockerfile.api
-      network: host
     ports:
       - "8043:8043"
     environment:
