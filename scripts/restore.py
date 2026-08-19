@@ -33,12 +33,14 @@ def launch_containers() -> None:
         for service in compose_files:
             service_name = service.compose.parent.stem
             service_dir = service.compose.parent.resolve()
-            os.chdir(service_dir)
+            # os.chdir(service_dir)
             logger.debug(f"Launching {service_name}")
             if service.env is not None:
-                run_command(f"docker compose --env-file {service.env} up -d")
+                run_command(
+                    f"docker compose --env-file {service.env} -f {service.compose} up -d"
+                )
             else:
-                run_command("docker compose up -d")
+                run_command(f"docker compose -f {service.compose} up -d")
     logger.info("Containers launched successfully")
 
 
