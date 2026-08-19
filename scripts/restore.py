@@ -1,4 +1,3 @@
-import os
 from utils import SERVICE_GROUPS, logger, run_command, create_services
 
 logger.debug("Starting playground restoration")
@@ -22,7 +21,6 @@ def remove_partial_containers() -> None:
     for group in reversed(SERVICE_GROUPS):
         services = SERVICES.get(group, [])
         for service in services:
-            # os.chdir(service.dir)
             run_command(f"docker compose -f {service.compose} down --remove-orphans")
 
 
@@ -32,8 +30,6 @@ def launch_containers() -> None:
         compose_files = SERVICES.get(group, [])
         for service in compose_files:
             service_name = service.compose.parent.stem
-            service_dir = service.compose.parent.resolve()
-            # os.chdir(service_dir)
             logger.debug(f"Launching {service_name}")
             if service.env is not None:
                 run_command(
