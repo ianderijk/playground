@@ -60,10 +60,11 @@ Local media streaming app for watching cartoons on weekends
 - Volume: `home/ianderijk/Backup/Chapflix2/content`
 - Ports: 8042
 
-#### Chaps Chores
+### APIs
 
-Web app for tracking chores around the house
+#### Chapflix-API
 
-- Version: 0.9.0
+API used in Chapflix backend
+- Version 1.0.0
 - Volume: N/A
-- Ports: 8052
+- Ports 8043
