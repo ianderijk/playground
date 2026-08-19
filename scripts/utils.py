@@ -23,6 +23,7 @@ SERVICE_MAPPING = {
 }
 
 class Service(NamedTuple):
+    dir: Path
     compose: Path
     env: Path | None
 
@@ -37,7 +38,7 @@ def run_command(command: str, check: bool = True, logger=logger) -> Any:
         return result
     except subprocess.CalledProcessError as e:
         logger.critical(f"Failed to run command, exception: {e}")
-        os._exit(1)
+        raise
 
 
 def create_services() -> dict[str, list]:
@@ -48,10 +49,11 @@ def create_services() -> dict[str, list]:
         for root, _, files in os.walk(service_path):
             if any("docker-compose" in x for x in files):
                 service_group = Path(root).parent.stem
+                service_dir = Path(root).parent.resolve()
                 compose_path = Path(root) / "docker-compose.yml"
                 env_path = Path(root) / ".env"
                 env_file = env_path if env_path.exists() else None
-                service_obj = Service(compose_path, env_file)
+                service_obj = Service(service_dir, compose_path, env_file)
                 services[service_group].append(service_obj)
                 logger.debug(f"Found {compose_path}")
     return services

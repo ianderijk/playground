@@ -22,10 +22,8 @@ def remove_partial_containers() -> None:
     for group in reversed(SERVICE_GROUPS):
         services = SERVICES.get(group, [])
         for service in services:
-            run_command(
-                f"docker compose -f {service.compose} down --remove-orphans",
-                check=False,
-            )
+            os.chdir(service.dir)
+            run_command("docker compose down --remove-orphans")
 
 
 def launch_containers() -> None:
