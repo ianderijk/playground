@@ -56,7 +56,7 @@ s3 compatible object store
 
 Local media streaming app for watching cartoons on weekends
 
-- Version: 1.0.2
+- Version: 2.1.0
 - Volume: `home/ianderijk/Backup/Chapflix2/content`
 - Ports: 8042
 
