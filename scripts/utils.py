@@ -37,7 +37,7 @@ def run_command(command: str, check: bool = True, logger=logger) -> Any:
         return result
     except subprocess.CalledProcessError as e:
         logger.critical(f"Failed to run command, exception: {e}")
-        os._exit(1)
+        raise
 
 
 def create_services() -> dict[str, list]:
